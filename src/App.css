@@ -2,37 +2,27 @@
   text-align: center;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+#heading-container {
+  background-color: #677070;
+  min-height: 10vh;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
+#question-container {
   background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
+  min-height: 20vh;
   align-items: center;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
+  font-size: calc(69px + 4vmin);
   color: white;
+
+  padding-top: 4vmin;
+  padding-bottom: 4vmin;
 }
 
-.App-link {
-  color: #61dafb;
-}
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+#answer-input {
+  background-color: #282c34;
+  max-width: 40vh;
+  height: calc(69px + 4vmin);
+  font-size: calc(69px + 4vmin);
+  color: white;
 }
