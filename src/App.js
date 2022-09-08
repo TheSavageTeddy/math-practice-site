@@ -6,89 +6,12 @@ function randInt(min, max) { //random number inclusive both ranges
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-const Answer = (props) => {
-  const [answer, setAnswer] = useState(0);
-  const n1 = props.n1
-  const n2 = props.n2
-  const operator = props.op
-
-  console.log("ANSWER OP", operator)
-
-
-  const markAnswer = () => {
-    if (eval(`${n1} ${operator} ${n2}`) == answer){
-      alert("CORRECT")
-    }else{
-      alert("INCORRECT")
-    }
-  }
-
-  return (
-    <>
-      <input 
-        id = "answer-input" 
-        type = "tel" 
-        onKeyDown={(e) => {
-          if (e.key === 'Enter') {
-            markAnswer()
-          }
-        }}
-        onInput={(e) => setAnswer(e.target.value)} // get their input
-      />
-    </>
-  )
-}
-
-const Question = (props) => {
-  let op = null
-  switch (String(props.op)){
-    case "+":
-      op = "+"
-      break
-    case "-":
-      op = "-"
-      break
-    case "*":
-      op = "×"
-      break
-    case "/":
-      op = "÷"
-      break
-  }
-
-  let n1 = props.n1range
-  let n2 = props.n2range
-  console.log("ANSWER n1 RNAGE", props.n1range, props.n1range[0], props.n1range[1])
-  if (!n1 || !n2){ //hasnt loaded
-    n1 = 1
-    n2 = 1
-  }else{
-    n1 = randInt(...props.n1range)
-    n2 = randInt(...props.n2range)
-    console.log("N1 N2", n1,n2)
-    console.log(props.op)
-  }
-  return (
-    <>
-      <div id="question-container">
-        <label id="">{n1} {op} {n2} = </label>
-        <Answer 
-          n1={n1}  // lol ... to unpack
-          n2={n2}
-          op={props.op}
-        />
-      </div>
-    </>
-  )
-}
-
-
 const App = () => {
   
-
   //current
   const [num1, setNum1] = useState(0);
   const [num2, setNum2] = useState(0);
+  const [answer, setAnswer] = useState(0);
 
   //config params
   const [n1range, setn1range] = useState(0);
@@ -117,10 +40,10 @@ const App = () => {
       console.log(questionSettings)
 
       config.questionSettings = questionSettings
-      console.log("set up config", config, config.questionSettings)
-      
       localStorage.setItem('config', JSON.stringify(config))
     }
+    console.log("set up config", config, config.questionSettings)
+    console.log("json string", JSON.stringify(config))
 
     let questionSettings = config.questionSettings
 
@@ -142,6 +65,22 @@ const App = () => {
     config['questionSettings'] = questionSettings
 
     localStorage.setItem('config', JSON.stringify(config));
+  }
+
+  function newQuestion(){
+    console.log("NEW QUESTION")
+    setNum1(randInt(...n1range))
+    setNum2(randInt(...n2range))
+    document.getElementById('answer-input').value = '' // clear input box
+  }
+
+  function markAnswer(){
+    if (eval(`${num1} ${operator} ${num2}`) == answer){
+      newQuestion()
+      alert('correct')
+    }else{
+      alert('incorrect')
+    }
   }
 
 
@@ -172,7 +111,20 @@ const App = () => {
   return (
     <div className="App">
       <h1>hello</h1>
-      <Question n1range={n1range} n2range={n2range} op={operator} />
+        <div id="question-container">
+          <label id="">{num1} {operator} {num2} = </label>
+          <input 
+          id = "answer-input" 
+          type = "tel" 
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              markAnswer()
+              console.log("ENTER PRESSED")
+            }
+          }}
+            onInput={(e) => setAnswer(e.target.value)} // get their input
+          />
+        </div>
     </div>
   );
   
