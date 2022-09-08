@@ -1,5 +1,5 @@
 import './App.css';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Component } from 'react';
 
 //helper funcs
 function randInt(min, max) { //random number inclusive both ranges
@@ -39,8 +39,8 @@ const App = () => {
       console.log("no local storage found! setting them up now")
       //default settings for the site
       let questionSettings = {}
-      questionSettings.n1range = [1, 9]
-      questionSettings.n2range = [1, 9]
+      questionSettings.n1range = [1,2,3,4,5,6,7,8,9]
+      questionSettings.n2range = [1,2,3,4,5,6,7,8,9]
       questionSettings.operator = "*"
 
       console.log(questionSettings)
@@ -63,6 +63,8 @@ const App = () => {
   }
 
   function updateLocalStorage(){
+
+    //QUESTION SETTINGS
     let questionSettings = {}
     questionSettings['n1range'] = n1range
     questionSettings['n2range'] = n2range
@@ -77,10 +79,9 @@ const App = () => {
     console.log("NEW QUESTION")
     if (!n1range || !n2range){
       console.log("ranges empty")
-      //newQuestion()
     }else{
-      setNum1(randInt(...n1range))
-      setNum2(randInt(...n2range))
+      setNum1(randItem(n1range))
+      setNum2(randItem(n2range))
     }
   }
 
@@ -115,26 +116,35 @@ const App = () => {
     let includedNums = []
     for (var i=0; elements[i]; i++){
       if (elements[i].checked){
+        elements[i].checked = true
         includedNums.push(Number(elements[i].value))
       }
     }
     console.log(includedNums)
+    setn1range(includedNums)
+
+
+    // a useEffect will be used to update to local storage when n1range changes
   }
 
   //COMPONENTS
-
   const NumberLabel = (props) => {
+    let isChecked = false
 
-    console.log("NUMBER LABELLING")
+    if (n1range){
+      isChecked = (n1range.includes(Number(props.num)))
+    }
+
+    
+
     return (
     <>
     <label class="checkbox-label" for={"number" + props.num}>{props.num} </label>
-    <input value={props.num} class="checkbox-input" type='checkbox' id={"n" + props.num} name={"number" + props.num}></input>
+    <input defaultChecked={isChecked} value={props.num} class="checkbox-input" type='checkbox' id={"n" + props.num} name={"number" + props.num}></input>
     <br></br>
     </>
     )
   }
-
 
   useEffect(()=>{ // on page load
 
@@ -180,6 +190,17 @@ const App = () => {
 
   useEffect(()=>{
     newQuestion()
+    //save n1range to local storage
+    let config = JSON.parse(localStorage.getItem('config'))
+    if (!n1range){
+      console.log("N1RANGE USEEFFECT NO CONFIG, EMPTY n1 RANGE")
+    }else{
+      console.log("CONFIG IS", config)
+
+      config['questionSettings']['n1range'] = n1range
+      localStorage.setItem('config', JSON.stringify(config))
+    }
+
   }, [n1range])
 
   useEffect(()=>{
