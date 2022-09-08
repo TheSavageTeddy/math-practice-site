@@ -1,3 +1,7 @@
+body{
+  background-color: #ffffff;
+}
+
 .App {
   text-align: center;
 }
@@ -16,15 +20,21 @@
   color: white;
 
   padding-top: 4vmin;
-  padding-bottom: 4vmin;
+  padding-bottom: 2vmin;
 }
 
 #answer-input {
-  background-color: #282c34;
+  position: relative;
+  top: 0vh;
+  background-color: #1b1d1e;
   max-width: 40vh;
-  height: calc(69px + 4vmin);
+  height: calc(79px + 4vmin);
   font-size: calc(69px + 4vmin);
   color: white;
+
+
+  outline: none; /* remove outline */
+  padding-bottom: 15px;
 }
 
 
@@ -64,4 +74,44 @@
 
 .checkbox-op-label{
   font-size: 25px;
+}
+
+
+/*
+
+    TRANSCRIPT
+
+*/
+
+#transcriptContainer{
+  text-align: center;
+}
+
+#transcript-table{
+  /* center */
+  margin-left: auto;
+  margin-right: auto;
+  margin: 0px auto;
+
+  width: 80vw;
+
+  font-size: 30px;
+}
+
+.transcript-correct{
+  background-color: lime;
+}
+
+.transcript-incorrect{
+  background-color: palevioletred;
+}
+
+.transcript-table-data-q{
+  height: 50px;
+  width: 50vw;
+}
+
+.transcript-table-data-q .transcript-table-data-fb{
+  height: 50px;
+  width: 15vw;
 }

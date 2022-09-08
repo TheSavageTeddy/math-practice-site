@@ -67,22 +67,43 @@ const App = () => {
       console.log(questionSettings)
 
       config.questionSettings = questionSettings
+      //config.transcript = []
+
       localStorage.setItem('config', JSON.stringify(config))
     }
 
 
     let questionSettings = config.questionSettings
 
-    console.log("q's validops",questionSettings.validOps)
+    
     
     //set values of params accordingly
     setn1range(questionSettings.n1range)
     setn2range(questionSettings.n2range)
     setOperator(questionSettings.operator)
     setValidOperators(questionSettings.validOps)
+    
+    //set transcript
+    if (config.transcript){
+      console.log("q's transcript",config.transcript)
+      for (var i=config.transcript.length-1; i>=0; i--){//god why this took an hour
+        let row = <>
+        <TranscriptRow 
+        status={config.transcript[i].props.children.props.status} //WTF IS PROPS CHILDREN PROPS STATUS WHAT
+        question={config.transcript[i].props.children.props.question}  //NOW THE ARRAY FLIPS AFTER EVERY RELOAD WTF
+        answer={config.transcript[i].props.children.props.answer}  //and now its deleating things :/
+        feedback={config.transcript[i].props.children.props.feedback} //AND NOW IT FINALLY WORKS AAAAÀAAÂĀÆ
+        />
+        </>
+        console.log("LOOP ITEM",config.transcript[i])
+        setTranscript(old => [row, ...old]) // insert new row at front of array (not back) 
+      }
+      console.log("transcript afte rloop",transcript)
+      
+    }
   }
 
-  function updateLocalStorage(){
+  const updateLocalStorage = () => {
 
     //QUESTION SETTINGS
     let questionSettings = {}
@@ -93,6 +114,11 @@ const App = () => {
     config['questionSettings'] = questionSettings
 
     localStorage.setItem('config', JSON.stringify(config));
+  }
+
+  const clearLocalStorage = () =>{
+    localStorage.clear()
+    window.location.reload()
   }
 
   function newQuestion(){
@@ -110,24 +136,44 @@ const App = () => {
     if (eval(`${num1} ${operator} ${num2}`) == answer){
       newQuestion()
       document.getElementById('answer-input').value = '' // clear input box
-      alert('correct')
+      //alert('correct')
+      addTranscript(true, `${num1} ${operatorText} ${num2} = `, `${answer}`, "")
     }else{
-      alert('incorrect')
+      //alert('incorrect')
+      addTranscript(false, `${num1} ${operatorText} ${num2} = `, `${answer}`, `${eval(`${num1} ${operator} ${num2}`)}`)
     }
-    addTranscript(true, "question", "ans", "feedback")
   }
 
-  const transcriptRow = (props) =>{
+  const TranscriptRow = (props) =>{
+    let color = 'transcript-incorrect'
+    if (props.status){
+      color = 'transcript-correct'
+    }
     return (
     <>
-    <p>{props.status} {props.question} {props.answer} {props.feedback}</p>
+    <tr className={color+" transcript-table-row"}>
+      <td className='transcript-table-data-q'>{props.question}</td>
+      <td className='transcript-table-data-ans'>{props.answer}</td>
+      <td className='transcript-table-data-fb'>{props.feedback}</td>
+    </tr>
     </>
     )
   }
 
   function addTranscript(status, question, answer, feedback){
-    let row = <><transcriptRow status={status} question={question} answer={answer} feedback={feedback} /></>
-    setTranscript(old => [...old, row])
+    console.log("TRANSCRIPT", transcript)
+    let row = <><TranscriptRow status={status} question={question} answer={answer} feedback={feedback} /></>
+    setTranscript(old => [row, ...old]) // insert new row at front of array (not back)
+
+    let conf = JSON.parse(localStorage.getItem('config'))
+    console.log("COFIG is", conf)
+    conf['transcript'] = transcript
+    console.log("ADD TRANSCRIPT CONF", conf)
+    localStorage.setItem('config', JSON.stringify(conf))
+  }
+
+  function clearTranscript(){
+    setTranscript([])
   }
 
   function updateSettings(){
@@ -239,14 +285,22 @@ const App = () => {
     if (!validoperators){
     }else{
       config['questionSettings']['validOps'] = validoperators
-      console.log("CONFIG IS", config)
       localStorage.setItem('config', JSON.stringify(config))
     }
   }, [validoperators])
 
   useEffect(()=>{
-    console.log(transcript)
+    //save transcript to local storage
+    let config = JSON.parse(localStorage.getItem('config'))
+    if (!transcript){
+    }else{
+      console.log("CONFIG BEFORE SET", config)
+      config['transcript'] = transcript
+      console.log("NOW CONFIG SET TO", config, "TRANSCRIPT IS", transcript)
+      localStorage.setItem('config', JSON.stringify(config))
+    }
   }, [transcript])
+
 
   
   //HTML FRAME RETURN
@@ -268,7 +322,7 @@ const App = () => {
         <NumberLabel num="12" />
         <br></br>
         <h3>operation</h3>
-        <OperatorLabel op="+" /><span> </span> {/*space seperation also lol need {} for comment */}
+        <OperatorLabel op="+" /><span> </span> {/*space seperation also lol need {} for comment wait somehow // works sometimes what im confused now ok whatever */}
         <OperatorLabel op="-" />
         <br></br>
         <OperatorLabel op="*" /><span> </span>
@@ -279,10 +333,13 @@ const App = () => {
       </div>
       <div class="rightsidenav">
         <h3>other</h3>
+        <button onClick={()=>{clearTranscript()}}>clear transcript</button>
+        <button onClick={()=>{clearLocalStorage()}}>clear local storage (delete all data)</button>
+        <button onClick={()=>{getLocalStorage()}}>update local storage (TESTING)</button>
         <br></br>
 
       </div>
-      <h1>hello</h1>
+      <h1>hello</h1> {/* title */}
         <div id="question-container">
           <label id="">{num1} {operatorText} {num2} = </label>
           <input 
@@ -298,7 +355,16 @@ const App = () => {
           />
         </div>
       <div id="transcriptContainer">
-          <p>transcript</p>
+          <table id="transcript-table">
+            <tbody>
+              <tr>
+                <th className='transcript-table-data-q'>question</th>
+                <th className='transcript-table-data-ans'>your answer</th>
+                <th className='transcript-table-data-fb'>correct answer</th>
+              </tr>
+              {transcript}
+            </tbody>
+          </table>
       </div>
     </div>
     
