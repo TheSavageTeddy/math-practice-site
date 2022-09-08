@@ -10,6 +10,25 @@ function randItem(arr) { //random number inclusive both ranges
   return arr[randInt(0, arr.length-1)]
 }
 
+function mapArithmeticChar(operator){
+  let optext = ""
+  switch (operator){
+    case "+":
+      optext = "+"
+      break
+    case "-":
+      optext = "−" //actually a different char lol
+      break
+    case "*":
+      optext = "×"
+      break
+    case "/":
+      optext = "÷"
+      break
+  }
+  return optext
+}
+
 
 
 //main app
@@ -26,6 +45,7 @@ const App = () => {
   const [n1range, setn1range] = useState(0);
   const [n2range, setn2range] = useState(0);
   const [operator, setOperator] = useState(0);
+  const [validoperators, setValidOperators] = useState(0);
 
   //configure local storage
   let config = {}
@@ -41,25 +61,25 @@ const App = () => {
       let questionSettings = {}
       questionSettings.n1range = [1,2,3,4,5,6,7,8,9]
       questionSettings.n2range = [1,2,3,4,5,6,7,8,9]
-      questionSettings.operator = "*"
+      questionSettings.operator = "+"
+      questionSettings.validOps = ["+", "-", "*", "/"]
 
       console.log(questionSettings)
 
       config.questionSettings = questionSettings
       localStorage.setItem('config', JSON.stringify(config))
     }
-    console.log("set up config", config, config.questionSettings)
-    console.log("json string", JSON.stringify(config))
+
 
     let questionSettings = config.questionSettings
 
-    console.log("qsettings",questionSettings)
-    console.log("q's n1range",questionSettings.n1range)
+    console.log("q's validops",questionSettings.validOps)
     
     //set values of params accordingly
     setn1range(questionSettings.n1range)
     setn2range(questionSettings.n2range)
     setOperator(questionSettings.operator)
+    setValidOperators(questionSettings.validOps)
   }
 
   function updateLocalStorage(){
@@ -82,6 +102,7 @@ const App = () => {
     }else{
       setNum1(randItem(n1range))
       setNum2(randItem(n2range))
+      setOperator(randItem(validoperators))
     }
   }
 
@@ -111,8 +132,7 @@ const App = () => {
 
   function updateSettings(){
     //get numbers to include
-    let elements = document.getElementsByClassName('checkbox-input');
-    console.log(elements)
+    let elements = document.getElementsByClassName('checkbox-number-input');
     let includedNums = []
     for (var i=0; elements[i]; i++){
       if (elements[i].checked){
@@ -120,11 +140,20 @@ const App = () => {
         includedNums.push(Number(elements[i].value))
       }
     }
-    console.log(includedNums)
     setn1range(includedNums)
-
-
     // a useEffect will be used to update to local storage when n1range changes
+
+    //get operators to include
+    elements = document.getElementsByClassName('checkbox-op-input');
+    let includedOps = []
+    for (var i=0; elements[i]; i++){
+      if (elements[i].checked){
+        //elements[i].checked = true
+        includedOps.push(elements[i].value)
+      }
+    }
+    console.log("INCLUDED OPS",includedOps)
+    setValidOperators(includedOps)
   }
 
   //COMPONENTS
@@ -139,12 +168,29 @@ const App = () => {
 
     return (
     <>
-    <label class="checkbox-label" for={"number" + props.num}>{props.num} </label>
-    <input defaultChecked={isChecked} value={props.num} class="checkbox-input" type='checkbox' id={"n" + props.num} name={"number" + props.num}></input>
+    <label class="checkbox-num-label" for={"number" + props.num}>{props.num} </label>
+    <input defaultChecked={isChecked} value={props.num} class="checkbox-number-input" type='checkbox' id={"n" + props.num} name={"number" + props.num}></input>
     <br></br>
     </>
     )
   }
+
+  const OperatorLabel = (props) => {
+    let isChecked = false
+
+    if (validoperators){
+      isChecked = (validoperators.includes(props.op))
+    }
+
+    return (
+    <>
+    <label class="checkbox-op-label" for={"operator" + props.op}>{mapArithmeticChar(props.op)} </label>
+    <input defaultChecked={isChecked} value={props.op} class="checkbox-op-input" type='checkbox' id={"op" + props.op} name={"operator" + props.op}></input>
+    </>
+    )
+  }
+
+  //USE EFFECTS
 
   useEffect(()=>{ // on page load
 
@@ -170,21 +216,7 @@ const App = () => {
   }, []);
 
   useEffect(()=>{ //set operater text
-    let optext = null
-    switch (operator){
-      case "+":
-        optext = "+"
-        break
-      case "-":
-        optext = "-"
-        break
-      case "*":
-        optext = "×"
-        break
-      case "/":
-        optext = "÷"
-        break
-    }
+    let optext = mapArithmeticChar(operator)
     setOperatorText(optext)
   }, [operator])
 
@@ -193,9 +225,7 @@ const App = () => {
     //save n1range to local storage
     let config = JSON.parse(localStorage.getItem('config'))
     if (!n1range){
-      console.log("N1RANGE USEEFFECT NO CONFIG, EMPTY n1 RANGE")
     }else{
-      console.log("CONFIG IS", config)
 
       config['questionSettings']['n1range'] = n1range
       localStorage.setItem('config', JSON.stringify(config))
@@ -204,14 +234,26 @@ const App = () => {
   }, [n1range])
 
   useEffect(()=>{
+    //save valid ops to local storage
+    let config = JSON.parse(localStorage.getItem('config'))
+    if (!validoperators){
+    }else{
+      config['questionSettings']['validOps'] = validoperators
+      console.log("CONFIG IS", config)
+      localStorage.setItem('config', JSON.stringify(config))
+    }
+  }, [validoperators])
+
+  useEffect(()=>{
     console.log(transcript)
   }, [transcript])
 
   
+  //HTML FRAME RETURN
   return (
     <div className="App">
-      <div class="sidenav">
-        <h3>numbers to include</h3>
+      <div class="leftsidenav">
+        <h3>numbers included</h3>
         <NumberLabel num="1" />
         <NumberLabel num="2" />
         <NumberLabel num="3" />
@@ -225,8 +267,20 @@ const App = () => {
         <NumberLabel num="11" />
         <NumberLabel num="12" />
         <br></br>
+        <h3>operation</h3>
+        <OperatorLabel op="+" /><span> </span> {/*space seperation also lol need {} for comment */}
+        <OperatorLabel op="-" />
+        <br></br>
+        <OperatorLabel op="*" /><span> </span>
+        <OperatorLabel op="/" />
+        <br></br>
         <button onClick={()=>{updateSettings()}}>update</button>
         
+      </div>
+      <div class="rightsidenav">
+        <h3>other</h3>
+        <br></br>
+
       </div>
       <h1>hello</h1>
         <div id="question-container">
