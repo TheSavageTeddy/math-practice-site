@@ -1,25 +1,31 @@
 import './App.css';
 import { useState, useEffect } from 'react';
 
-
+//helper funcs
 function randInt(min, max) { //random number inclusive both ranges
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
+function randItem(arr) { //random number inclusive both ranges
+  return arr[randInt(0, arr.length-1)]
+}
+
+
+
+//main app
 const App = () => {
   
   //current
   const [num1, setNum1] = useState(0);
   const [num2, setNum2] = useState(0);
   const [answer, setAnswer] = useState(0);
+  const [operatorText, setOperatorText] = useState(0);
+  const [transcript, setTranscript] = useState([])
 
   //config params
   const [n1range, setn1range] = useState(0);
   const [n2range, setn2range] = useState(0);
   const [operator, setOperator] = useState(0);
-
-  //set default params to something so web doesnt break
-
 
   //configure local storage
   let config = {}
@@ -69,18 +75,64 @@ const App = () => {
 
   function newQuestion(){
     console.log("NEW QUESTION")
-    setNum1(randInt(...n1range))
-    setNum2(randInt(...n2range))
-    document.getElementById('answer-input').value = '' // clear input box
+    if (!n1range || !n2range){
+      console.log("ranges empty")
+      //newQuestion()
+    }else{
+      setNum1(randInt(...n1range))
+      setNum2(randInt(...n2range))
+    }
   }
 
   function markAnswer(){
     if (eval(`${num1} ${operator} ${num2}`) == answer){
       newQuestion()
+      document.getElementById('answer-input').value = '' // clear input box
       alert('correct')
     }else{
       alert('incorrect')
     }
+    addTranscript(true, "question", "ans", "feedback")
+  }
+
+  const transcriptRow = (props) =>{
+    return (
+    <>
+    <p>{props.status} {props.question} {props.answer} {props.feedback}</p>
+    </>
+    )
+  }
+
+  function addTranscript(status, question, answer, feedback){
+    let row = <><transcriptRow status={status} question={question} answer={answer} feedback={feedback} /></>
+    setTranscript(old => [...old, row])
+  }
+
+  function updateSettings(){
+    //get numbers to include
+    let elements = document.getElementsByClassName('checkbox-input');
+    console.log(elements)
+    let includedNums = []
+    for (var i=0; elements[i]; i++){
+      if (elements[i].checked){
+        includedNums.push(Number(elements[i].value))
+      }
+    }
+    console.log(includedNums)
+  }
+
+  //COMPONENTS
+
+  const NumberLabel = (props) => {
+
+    console.log("NUMBER LABELLING")
+    return (
+    <>
+    <label class="checkbox-label" for={"number" + props.num}>{props.num} </label>
+    <input value={props.num} class="checkbox-input" type='checkbox' id={"n" + props.num} name={"number" + props.num}></input>
+    <br></br>
+    </>
+    )
   }
 
 
@@ -103,16 +155,61 @@ const App = () => {
     */
     getLocalStorage()
     //updateLocalStorage()
-
+    newQuestion()
 
   }, []);
+
+  useEffect(()=>{ //set operater text
+    let optext = null
+    switch (operator){
+      case "+":
+        optext = "+"
+        break
+      case "-":
+        optext = "-"
+        break
+      case "*":
+        optext = "×"
+        break
+      case "/":
+        optext = "÷"
+        break
+    }
+    setOperatorText(optext)
+  }, [operator])
+
+  useEffect(()=>{
+    newQuestion()
+  }, [n1range])
+
+  useEffect(()=>{
+    console.log(transcript)
+  }, [transcript])
 
   
   return (
     <div className="App">
+      <div class="sidenav">
+        <h3>numbers to include</h3>
+        <NumberLabel num="1" />
+        <NumberLabel num="2" />
+        <NumberLabel num="3" />
+        <NumberLabel num="4" />
+        <NumberLabel num="5" />
+        <NumberLabel num="6" />
+        <NumberLabel num="7" />
+        <NumberLabel num="8" />
+        <NumberLabel num="9" />
+        <NumberLabel num="10" />
+        <NumberLabel num="11" />
+        <NumberLabel num="12" />
+        <br></br>
+        <button onClick={()=>{updateSettings()}}>update</button>
+        
+      </div>
       <h1>hello</h1>
         <div id="question-container">
-          <label id="">{num1} {operator} {num2} = </label>
+          <label id="">{num1} {operatorText} {num2} = </label>
           <input 
           id = "answer-input" 
           type = "tel" 
@@ -125,9 +222,12 @@ const App = () => {
             onInput={(e) => setAnswer(e.target.value)} // get their input
           />
         </div>
+      <div id="transcriptContainer">
+          <p>transcript</p>
+      </div>
     </div>
+    
   );
-  
 }
 
 export default App;
