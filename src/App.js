@@ -14,6 +14,10 @@ function randItem(arr) { //random number inclusive both ranges
   return arr[randInt(0, arr.length-1)]
 }
 
+function range(start, stop) { //returns list of nums inclusive both ranges
+  return [...Array(stop).keys()].map(i => i + start);
+}
+
 function mapArithmeticChar(operator){
   let optext = ""
   switch (operator){
@@ -39,7 +43,6 @@ function mapArithmeticChar(operator){
 const App = () => {
   
   //current
-
   const [num1, setNum1] = useState(0);
   const [num2, setNum2] = useState(0);
   const [answer, setAnswer] = useState(0);
@@ -227,6 +230,15 @@ const App = () => {
     console.log("INCLUDED OPS",includedOps)
     setValidOperators(includedOps)
   }
+  
+  function selectAllNumbers(){
+    setn1range(range(1,12))
+  }
+
+  function selectNoNumbers(){
+    setn1range(0)
+  }
+
 
   //COMPONENTS
   const NumberLabel = (props) => {
@@ -357,12 +369,15 @@ const App = () => {
         <NumberLabel num="11" />
         <NumberLabel num="12" />
         <br></br>
+        <span><button onClick={()=>{selectAllNumbers()}}>all</button><button onClick={()=>{selectNoNumbers()}}>none</button></span>
+        <br></br>
         <h3>operation</h3>
         <OperatorLabel op="+" /><span> </span> {/*space seperation also lol need {} for comment wait somehow // works sometimes what im confused now ok whatever */}
         <OperatorLabel op="-" />
         <br></br>
         <OperatorLabel op="*" /><span> </span>
         <OperatorLabel op="/" />
+        <br></br>
         <br></br>
         <button onClick={()=>{updateSettings()}}>update</button>
         
@@ -384,14 +399,16 @@ const App = () => {
       </div>
       <h1>hello</h1> {/* title */}
         <div id="question-container">
-          <label id="">{num1} {operatorText} {num2} = </label>
+          <label id="question-text">{(num1 && num2 && operator ? `${num1} ${operatorText} ${num2} = ` : "you have to actually select some things ")}</label> {/* another ternary for when they dont even select stuff */}
           <input 
           id = "answer-input" 
           type = "tel" 
           onKeyDown={(e) => {
             if (e.key === 'Enter') {
-              markAnswer()
-              console.log("ENTER PRESSED")
+              if (num1 && num2 && operator){ //check if they actually selected options
+                markAnswer()
+                console.log("ENTER PRESSED")
+              }
             }
           }}
             onInput={(e) => setAnswer(e.target.value)} // get their input
