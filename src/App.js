@@ -1,5 +1,6 @@
 import './App.css';
 import { useState, useEffect, Component } from 'react';
+import { render } from 'preact';
 
 //helper funcs
 function randInt(min, max) { //random number inclusive both ranges
@@ -102,8 +103,14 @@ const App = () => {
     setValidOperators(questionSettings.validOps)
 
     //set scores
-    setCorrects(config.scores.corrects)
-    setQuestionsAnswered(config.scores.questionsAnswered)
+    if (config.scores){
+      setCorrects(config.scores.corrects)
+      setQuestionsAnswered(config.scores.questionsAnswered)
+    }else{
+      config.scores.corrects = 0
+      config.scores.questionsAnswered = 0
+    }
+    
     
     //set transcript
     if (config.transcript){
@@ -241,16 +248,14 @@ const App = () => {
 
 
   //COMPONENTS
-  const NumberLabel = (props) => {
+  const NumberLabel = (props) => { //ES6 function thing, not using class as i need to parse variables
     let isChecked = false
 
     if (n1range){
       isChecked = (n1range.includes(Number(props.num)))
     }
 
-    
-
-    return (
+    return(
     <>
     <label class="checkbox-num-label" for={"number" + props.num}>{props.num} </label>
     <input defaultChecked={isChecked} value={props.num} class="checkbox-number-input" type='checkbox' id={"n" + props.num} name={"number" + props.num}></input>
@@ -387,7 +392,7 @@ const App = () => {
         <p>{corrects}/{questionsAnswered}</p>
         <h3>accuracy</h3>
         <p>{(corrects!=0 ? round(corrects/questionsAnswered*100,2) : 0)}%</p> {/* ternary operator for case of 0 divide 0 = undefined */}
-        <button onClick={()=>{}}>save current score</button>
+        <button onClick={()=>{}}>save current score</button>{/*TODO*/}
         <button onClick={()=>{setCorrects(0); setQuestionsAnswered(0)}}>clear current score</button>
 
         <h3>other</h3>
