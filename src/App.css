@@ -38,11 +38,25 @@ body{
 }
 
 
+/* 
+
+LEFT SIDE NAVIGATION BAR 
+
+*/
+
 
 .checkbox-label{
   color: white
 }
 
+.checkbox-op-label{
+  font-size: 25px;
+}
+
+/* stupid checkboxes */
+
+
+/* side nav bar containers */
 
 .leftsidenav {
   height: 100%; 
@@ -72,9 +86,7 @@ body{
   color: white
 }
 
-.checkbox-op-label{
-  font-size: 25px;
-}
+
 
 
 /*

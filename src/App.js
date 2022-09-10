@@ -6,6 +6,10 @@ function randInt(min, max) { //random number inclusive both ranges
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
+function round(num, dp){
+  return Math.round((num + Number.EPSILON) * 10**dp) / 10**dp
+}
+
 function randItem(arr) { //random number inclusive both ranges
   return arr[randInt(0, arr.length-1)]
 }
@@ -35,11 +39,14 @@ function mapArithmeticChar(operator){
 const App = () => {
   
   //current
+
   const [num1, setNum1] = useState(0);
   const [num2, setNum2] = useState(0);
   const [answer, setAnswer] = useState(0);
   const [operatorText, setOperatorText] = useState(0);
   const [transcript, setTranscript] = useState([])
+  const [corrects, setCorrects] = useState(0)
+  const [questionsAnswered, setQuestionsAnswered] = useState(0)
 
   //config params
   const [n1range, setn1range] = useState(0);
@@ -50,6 +57,7 @@ const App = () => {
   //configure local storage
   let config = {}
   
+
 
   const getLocalStorage = () => {
     config = JSON.parse(localStorage.getItem('config'))
@@ -69,6 +77,13 @@ const App = () => {
       config.questionSettings = questionSettings
       //config.transcript = []
 
+      // set default score (0)
+      let scores = {}
+      scores.corrects = 0
+      scores.questionsAnswered = 0
+
+      config.scores = scores
+
       localStorage.setItem('config', JSON.stringify(config))
     }
 
@@ -82,10 +97,13 @@ const App = () => {
     setn2range(questionSettings.n2range)
     setOperator(questionSettings.operator)
     setValidOperators(questionSettings.validOps)
+
+    //set scores
+    setCorrects(config.scores.corrects)
+    setQuestionsAnswered(config.scores.questionsAnswered)
     
     //set transcript
     if (config.transcript){
-      console.log("q's transcript",config.transcript)
       for (var i=config.transcript.length-1; i>=0; i--){//god why this took an hour
         let row = <>
         <TranscriptRow 
@@ -95,25 +113,10 @@ const App = () => {
         feedback={config.transcript[i].props.children.props.feedback} //AND NOW IT FINALLY WORKS AAAAÀAAÂĀÆ
         />
         </>
-        console.log("LOOP ITEM",config.transcript[i])
         setTranscript(old => [row, ...old]) // insert new row at front of array (not back) 
       }
-      console.log("transcript afte rloop",transcript)
-      
     }
-  }
 
-  const updateLocalStorage = () => {
-
-    //QUESTION SETTINGS
-    let questionSettings = {}
-    questionSettings['n1range'] = n1range
-    questionSettings['n2range'] = n2range
-    questionSettings['operator'] = operator
-
-    config['questionSettings'] = questionSettings
-
-    localStorage.setItem('config', JSON.stringify(config));
   }
 
   const clearLocalStorage = () =>{
@@ -126,20 +129,43 @@ const App = () => {
     if (!n1range || !n2range){
       console.log("ranges empty")
     }else{
-      setNum1(randItem(n1range))
-      setNum2(randItem(n2range))
-      setOperator(randItem(validoperators))
+      let randOp = randItem(validoperators)
+      setOperator(randOp)
+      // give nice numbers if subtract or divide
+      // like non negative answers and non decimal point numbers
+      if (randOp === "/"){
+        let n1 = randItem(n1range)
+        let n2 = randItem(n2range)
+        // we'll let n2 be the answer (since its the non customizable one) cus like customizing answer = ez scores just spam the answer u chose
+        // therefore we give n1*n2 / n1 = n2 and give n1*n2 and n1 only
+        setNum1(n1*n2)
+        setNum2(n1)
+      }else if (randOp === "-"){
+        //subtracting is weird why would u specify numbers u want to subtract
+        //find we do this the same way as division then...
+        let n1 = randItem(n1range)
+        let n2 = randItem(n2range)
+        setNum1(n1+n2)
+        setNum2(n1)
+      }else{
+        setNum1(randItem(n1range))
+        setNum2(randItem(n2range))
+      }
+
+      
     }
   }
 
   function markAnswer(){
+    setQuestionsAnswered(prev=>prev+1)
     if (eval(`${num1} ${operator} ${num2}`) == answer){
+      //correct
       newQuestion()
       document.getElementById('answer-input').value = '' // clear input box
-      //alert('correct')
-      addTranscript(true, `${num1} ${operatorText} ${num2} = `, `${answer}`, "")
+      addTranscript(true, `${num1} ${operatorText} ${num2} = `, `${answer}`, `${eval(`${num1} ${operator} ${num2}`)}`)
+      setCorrects(prev=>prev+1)
     }else{
-      //alert('incorrect')
+      //incorrect
       addTranscript(false, `${num1} ${operatorText} ${num2} = `, `${answer}`, `${eval(`${num1} ${operator} ${num2}`)}`)
     }
   }
@@ -294,12 +320,22 @@ const App = () => {
     let config = JSON.parse(localStorage.getItem('config'))
     if (!transcript){
     }else{
-      console.log("CONFIG BEFORE SET", config)
       config['transcript'] = transcript
-      console.log("NOW CONFIG SET TO", config, "TRANSCRIPT IS", transcript)
       localStorage.setItem('config', JSON.stringify(config))
     }
   }, [transcript])
+
+  useEffect(()=>{
+    //save score to local storage
+    let config = JSON.parse(localStorage.getItem('config'))
+    if (!corrects || !questionsAnswered){
+    }else{
+      config['scores']['corrects'] = corrects
+      config['scores']['questionsAnswered'] = questionsAnswered
+      localStorage.setItem('config', JSON.stringify(config))
+      console.log("SET!", config)
+    }
+  }, [corrects, questionsAnswered])
 
 
   
@@ -332,9 +368,16 @@ const App = () => {
         
       </div>
       <div class="rightsidenav">
+        <h3>score</h3>
+        <p>{corrects}/{questionsAnswered}</p>
+        <h3>accuracy</h3>
+        <p>{(corrects!=0 ? round(corrects/questionsAnswered*100,2) : 0)}%</p> {/* ternary operator for case of 0 divide 0 = undefined */}
+        <button onClick={()=>{}}>save current score</button>
+        <button onClick={()=>{setCorrects(0); setQuestionsAnswered(0)}}>clear current score</button>
+
         <h3>other</h3>
         <button onClick={()=>{clearTranscript()}}>clear transcript</button>
-        <button onClick={()=>{clearLocalStorage()}}>clear local storage (delete all data)</button>
+        <button onClick={()=>{clearLocalStorage()}}>clear local storage <br></br>(<b>deletes ALL data</b>)</button>
         <button onClick={()=>{getLocalStorage()}}>update local storage (TESTING)</button>
         <br></br>
 
