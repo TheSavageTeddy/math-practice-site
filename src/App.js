@@ -478,9 +478,12 @@ const App = () => {
           type = "tel" 
           onKeyDown={(e) => {
             if (e.key === 'Enter') {
-              if (num1 && num2 && operator){ //check if they actually selected options
-                markAnswer()
-                console.log("ENTER PRESSED")
+              if (num1 && num2 && operator){ //check if they actually selected options 
+                if (e.target.value === ''){// now also checks if they inputting something (cant submit nothing as answer)
+                }else{
+                  markAnswer()
+                }
+                
               }
             }
           }}
