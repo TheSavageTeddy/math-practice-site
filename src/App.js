@@ -51,6 +51,9 @@ const App = () => {
   const [transcript, setTranscript] = useState([])
   const [corrects, setCorrects] = useState(0)
   const [questionsAnswered, setQuestionsAnswered] = useState(0)
+  const [stats, setStats] = useState(0)
+  const [statsDisplay, setStatsDisplay] = useState([])
+  const [statsText, setStatsText] = useState(0)
 
   //config params
   const [n1range, setn1range] = useState(0);
@@ -88,6 +91,11 @@ const App = () => {
 
       config.scores = scores
 
+      //set default stats (empty {})
+      let stats = {}
+      config.stats = stats
+
+
       localStorage.setItem('config', JSON.stringify(config))
     }
 
@@ -109,6 +117,12 @@ const App = () => {
     }else{
       config.scores.corrects = 0
       config.scores.questionsAnswered = 0
+    }
+
+    if (config.stats){
+      setStats(config.stats)
+    }else{
+      config.stats = {} //data structure: date: score:[correct,total], accuracy:}
     }
     
     
@@ -180,22 +194,6 @@ const App = () => {
     }
   }
 
-  const TranscriptRow = (props) =>{
-    let color = 'transcript-incorrect'
-    if (props.status){
-      color = 'transcript-correct'
-    }
-    return (
-    <>
-    <tr className={color+" transcript-table-row"}>
-      <td className='transcript-table-data-q'>{props.question}</td>
-      <td className='transcript-table-data-ans'>{props.answer}</td>
-      <td className='transcript-table-data-fb'>{props.feedback}</td>
-    </tr>
-    </>
-    )
-  }
-
   function addTranscript(status, question, answer, feedback){
     console.log("TRANSCRIPT", transcript)
     let row = <><TranscriptRow status={status} question={question} answer={answer} feedback={feedback} /></>
@@ -246,6 +244,45 @@ const App = () => {
     setn1range(0)
   }
 
+  function saveScore(){
+    let config = JSON.parse(localStorage.getItem('config'))
+    if (!stats){ //this shouldnt happen, but in case it does
+    }else{
+      //adds to local storage
+      let stats = {};
+
+      const d = new Date();
+      let [year, month, date, hours, minutes] = [d.getFullYear(), d.getMonth(), d.getDate(), d.getHours(), d.getMinutes()] //who tf needs seconds for precision on a math website
+      let dateString = `${date}/${month}/${year} ${String(hours).length===2 ? hours : "0" + String(hours)}:${String(minutes).length===2 ? minutes : "0" + String(minutes)}`
+      let unixTime = d.getTime() //will be used as key for the objects like {unixtime:{date,score,accuracy}}
+      
+      let accuracyNum = (corrects!=0 ? round(corrects/questionsAnswered*100,2) : 0)
+      config.stats[unixTime] = {date: dateString, score: [corrects, questionsAnswered], accuracy: accuracyNum}
+      console.log(config.stats)
+      localStorage.setItem('config', JSON.stringify(config))
+
+      //adds element to stats div
+      let row = <><StatsRow date={dateString} score={[corrects, questionsAnswered]} accuracy={accuracyNum+"%"} /></>
+      setStatsDisplay(old => [row, ...old]) // insert new row at front of array (not back)  
+
+    }
+  }
+
+  function toggleTranscript(){//shows/hides transcript (to show the stats)
+    let transcriptContainer = document.getElementById("transcriptContainer")
+    let statsContainer = document.getElementById("stats-container")
+    console.log(transcriptContainer.style.display)
+    if (transcriptContainer.style.display === "block" || transcriptContainer.style.display === ''){ //check if empty too (idk why but in css i specified but it still shows up as empty at start)
+      transcriptContainer.style.display = "none"
+      statsContainer.style.display = "block"
+      setStatsText("hide statistics")
+    }else{
+      transcriptContainer.style.display = "block"
+      statsContainer.style.display = "none"
+      setStatsText("show statistics")
+    }
+  }
+
 
   //COMPONENTS
   const NumberLabel = (props) => { //ES6 function thing, not using class as i need to parse variables
@@ -279,6 +316,36 @@ const App = () => {
     )
   }
 
+
+  const TranscriptRow = (props) =>{
+    let color = 'transcript-incorrect'
+    if (props.status){
+      color = 'transcript-correct'
+    }
+    return (
+    <>
+    <tr className={color+" transcript-table-row"}>
+      <td className='transcript-table-data-q'>{props.question}</td>
+      <td className='transcript-table-data-ans'>{props.answer}</td>
+      <td className='transcript-table-data-fb'>{props.feedback}</td>
+    </tr>
+    </>
+    )
+  }
+
+
+  const StatsRow = (props) =>{
+    return (
+    <>
+    <tr className={"stats-table-row"}>
+      <td className='stats-table-data-date'>{props.date}</td>
+      <td className='stats-table-data-score'>{props.score[0]}/{props.score[1]}</td>
+      <td className='stats-table-data-acc'>{props.accuracy}</td>
+    </tr>
+    </>
+    )
+  }
+
   //USE EFFECTS
 
   useEffect(()=>{ // on page load
@@ -298,10 +365,11 @@ const App = () => {
       - wrong answers
 
     */
+    
     getLocalStorage()
     //updateLocalStorage()
     newQuestion()
-
+    setStatsText("show statistics")
   }, []);
 
   useEffect(()=>{ //set operater text
@@ -392,8 +460,8 @@ const App = () => {
         <p>{corrects}/{questionsAnswered}</p>
         <h3>accuracy</h3>
         <p>{(corrects!=0 ? round(corrects/questionsAnswered*100,2) : 0)}%</p> {/* ternary operator for case of 0 divide 0 = undefined */}
-        <button onClick={()=>{}}>save current score</button>{/*TODO*/}
-        <button onClick={()=>{setCorrects(0); setQuestionsAnswered(0)}}>clear current score</button>
+        <button onClick={()=>{saveScore(); setCorrects(0); setQuestionsAnswered(0)}}>save and clear current score</button>
+        <button onClick={()=>{toggleTranscript()}}>{statsText}</button>
 
         <h3>other</h3>
         <button onClick={()=>{clearTranscript()}}>clear transcript</button>
@@ -402,7 +470,7 @@ const App = () => {
         <br></br>
 
       </div>
-      <h1>hello</h1> {/* title */}
+      <h1>hello</h1> {/* title wait i should change this */}
         <div id="question-container">
           <label id="question-text">{(num1 && num2 && operator ? `${num1} ${operatorText} ${num2} = ` : "you have to actually select some things ")}</label> {/* another ternary for when they dont even select stuff */}
           <input 
@@ -419,17 +487,31 @@ const App = () => {
             onInput={(e) => setAnswer(e.target.value)} // get their input
           />
         </div>
-      <div id="transcriptContainer">
-          <table id="transcript-table">
-            <tbody>
-              <tr>
-                <th className='transcript-table-data-q'>question</th>
-                <th className='transcript-table-data-ans'>your answer</th>
-                <th className='transcript-table-data-fb'>correct answer</th>
-              </tr>
-              {transcript}
-            </tbody>
+      <div id="bottom-container">
+        <div id="transcriptContainer">
+            <table id="transcript-table">
+              <tbody>
+                <tr>
+                  <th className='transcript-table-data-q'>question</th>
+                  <th className='transcript-table-data-ans'>your answer</th>
+                  <th className='transcript-table-data-fb'>correct answer</th>
+                </tr>
+                {transcript}
+              </tbody>
+            </table>
+        </div>
+        <div id="stats-container">
+          <table id="stats-table">
+                <tbody>
+                  <tr>
+                    <th className='stats-table-date'>date</th>
+                    <th className='stats-table-score'>score</th>
+                    <th className='stats-table-acc'>accuracy</th>
+                  </tr>
+                  {statsDisplay}
+                </tbody>
           </table>
+        </div>
       </div>
     </div>
     

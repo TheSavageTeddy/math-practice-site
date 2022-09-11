@@ -97,6 +97,7 @@ LEFT SIDE NAVIGATION BAR
 
 #transcriptContainer{
   text-align: center;
+  display: block; /* default, to be toggled by js (for some reason doesnt work here? transcriptContainer.display is nothing*/
 }
 
 #transcript-table{
@@ -126,4 +127,36 @@ LEFT SIDE NAVIGATION BAR
 .transcript-table-data-q .transcript-table-data-fb{
   height: 50px;
   width: 15vw;
+}
+
+/* STATISTICS */
+#stats-container{
+  display: none; /* defualt, togglable by js */
+}
+
+#stats-table{
+  /* center */
+  margin-left: auto;
+  margin-right: auto;
+  margin: 0px auto;
+  text-align: center;
+
+  /*width: 80vw;*/
+
+  font-size: 30px;
+}
+
+.stats-table-date{
+  height: 50px;
+  width: 20vw;
+}
+
+.stats-table-score{
+  height: 50px;
+  width: 30vw;
+}
+
+.stats-table-acc{
+  height: 50px;
+  width: 30vw;
 }
