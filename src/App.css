@@ -95,6 +95,10 @@ LEFT SIDE NAVIGATION BAR
 
 */
 
+table{
+  table-layout: fixed;
+}
+
 #transcriptContainer{
   text-align: center;
   display: block; /* default, to be toggled by js (for some reason doesnt work here? transcriptContainer.display is nothing*/

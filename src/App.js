@@ -248,7 +248,7 @@ const App = () => {
 
   function saveScore(){
     let config = JSON.parse(localStorage.getItem('config'))
-    if (!stats){ //this shouldnt happen, but in case it does
+    if (!stats || questionsAnswered===0){
     }else{
       //adds to local storage
       let stats = {};
@@ -334,14 +334,17 @@ const App = () => {
     )
   }
 
-
   const StatsRow = (props) =>{
     return (
     <>
     <tr className={"stats-table-row"}>
       <td className='stats-table-data-date'>{props.date}</td>
       <td className='stats-table-data-score'>{props.score[0]}/{props.score[1]}</td>
-      <td className='stats-table-data-acc'>{props.accuracy}</td>
+      <div className='stats-table-data-acc' style={{width: '100%', backgroundColor: 'red'}}>
+        <div style={{width: props.accuracy, backgroundColor: 'lime'}}>
+          <td>{props.accuracy}</td>
+        </div>
+      </div>
     </tr>
     </>
     )
