@@ -441,9 +441,16 @@ const App = () => {
       config['scores']['corrects'] = corrects
       config['scores']['questionsAnswered'] = questionsAnswered
       localStorage.setItem('config', JSON.stringify(config))
-      console.log("SET!", config)
     }
   }, [corrects, questionsAnswered])
+
+  useEffect(()=>{
+    //update score to local storage when stats saved
+    let config = JSON.parse(localStorage.getItem('config'))
+    config['scores']['corrects'] = corrects
+    config['scores']['questionsAnswered'] = questionsAnswered
+    localStorage.setItem('config', JSON.stringify(config))
+  }, [statsDisplay])
 
 
   
@@ -507,7 +514,6 @@ const App = () => {
                 }else{
                   markAnswer()
                 }
-                
               }
             }
           }}
