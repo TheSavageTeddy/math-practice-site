@@ -127,10 +127,15 @@ const App = () => {
     }
     
     
-    //set transcript
+    
     if (config.transcript && !transcriptShowed){
+      //set transcript
+      setTranscriptShowed(1)//avoid displaying transcript twice on local storage update, also used for stats
+      console.log("trasncriptshowed", transcriptShowed)
+      let ttb = document.getElementById("transcript-table-body")
+      console.log("transcript-table-body", ttb, 'len', ttb.childElementCount)
       console.log("adding html transcript...")
-      setTranscriptShowed(1)//avoid displaying transcript twice on local storage update
+      
       for (var i=config.transcript.length-1; i>=0; i--){//god why this took an hour
         let row = <>
         <TranscriptRow 
@@ -142,7 +147,19 @@ const App = () => {
         </>
         setTranscript(old => [row, ...old]) // insert new row at front of array (not back) 
       }
+      
+      //set statistics
+      setStatsDisplay([])//make sure its empty first (incase sets twice)
+      if (config.stats){
+        for (let key in config.stats){
+          let obj = config.stats[key]
+          let row = <StatsRow date={obj.date} score={obj.score} accuracy={obj.accuracy+"%"} />
+          setStatsDisplay(old => [row, ...old])
+        }
+      }
     }
+
+
   }
 
   const clearLocalStorage = () =>{
@@ -186,12 +203,14 @@ const App = () => {
     setQuestionsAnswered(prev=>prev+1)
     if (eval(`${num1} ${operator} ${num2}`) == answer){
       //correct
+      document.getElementById('answer-input').style.color = 'white' //reset input colour
       newQuestion()
       document.getElementById('answer-input').value = '' // clear input box
       addTranscript(true, `${num1} ${operatorText} ${num2} = `, `${answer}`, `${eval(`${num1} ${operator} ${num2}`)}`)
       setCorrects(prev=>prev+1)
     }else{
       //incorrect
+      document.getElementById('answer-input').style.color = 'red' //set input red colour
       addTranscript(false, `${num1} ${operatorText} ${num2} = `, `${answer}`, `${eval(`${num1} ${operator} ${num2}`)}`)
     }
   }
@@ -464,7 +483,8 @@ const App = () => {
         <p>{corrects}/{questionsAnswered}</p>
         <h3>accuracy</h3>
         <p>{(corrects!=0 ? round(corrects/questionsAnswered*100,2) : 0)}%</p> {/* ternary operator for case of 0 divide 0 = undefined */}
-        <button onClick={()=>{saveScore(); setCorrects(0); setQuestionsAnswered(0)}}>save and clear current score</button>
+        <h3>statistics</h3>
+        <button onClick={()=>{saveScore(); setCorrects(0); setQuestionsAnswered(0)}}>save score</button>
         <button onClick={()=>{toggleTranscript()}}>{statsText}</button>
 
         <h3>other</h3>
@@ -497,7 +517,7 @@ const App = () => {
       <div id="bottom-container">
         <div id="transcriptContainer">
             <table id="transcript-table">
-              <tbody>
+              <tbody id="transcript-table-body">
                 <tr>
                   <th className='transcript-table-data-q'>question</th>
                   <th className='transcript-table-data-ans'>your answer</th>
