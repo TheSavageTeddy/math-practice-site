@@ -49,6 +49,7 @@ const App = () => {
   const [answer, setAnswer] = useState(0);
   const [operatorText, setOperatorText] = useState(0);
   const [transcript, setTranscript] = useState([])
+  const [transcriptShowed, setTranscriptShowed] = useState(0)
   const [corrects, setCorrects] = useState(0)
   const [questionsAnswered, setQuestionsAnswered] = useState(0)
   const [stats, setStats] = useState(0)
@@ -127,7 +128,9 @@ const App = () => {
     
     
     //set transcript
-    if (config.transcript){
+    if (config.transcript && !transcriptShowed){
+      console.log("adding html transcript...")
+      setTranscriptShowed(1)//avoid displaying transcript twice on local storage update
       for (var i=config.transcript.length-1; i>=0; i--){//god why this took an hour
         let row = <>
         <TranscriptRow 
@@ -140,7 +143,6 @@ const App = () => {
         setTranscript(old => [row, ...old]) // insert new row at front of array (not back) 
       }
     }
-
   }
 
   const clearLocalStorage = () =>{
@@ -315,7 +317,6 @@ const App = () => {
     </>
     )
   }
-
 
   const TranscriptRow = (props) =>{
     let color = 'transcript-incorrect'
