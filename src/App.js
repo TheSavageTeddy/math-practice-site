@@ -61,6 +61,9 @@ const App = () => {
   const [n2range, setn2range] = useState(0);
   const [operator, setOperator] = useState(0);
   const [validoperators, setValidOperators] = useState(0);
+  const [doIntervalSaving, setDoIntervalSaving] = useState(0);
+  const [intervalSavingAmount, setIntervalSavingAmount] = useState(0);
+  const [doDaySaving, setDoDaySaving] = useState(0);
 
   //configure local storage
   let config = {}
@@ -72,7 +75,7 @@ const App = () => {
     console.log(config)
     if (!config){ // if doesnt exist (new person)
       config = {} //reset config from null or undefined
-      console.log("no local storage found! setting them up now")
+      console.log("[!] no local storage found! setting them up now")
       //default settings for the site
       let questionSettings = {}
       questionSettings.n1range = [1,2,3,4,5,6,7,8,9]
@@ -96,15 +99,18 @@ const App = () => {
       let stats = {}
       config.stats = stats
 
+      //set default saving settings
+      let saving = {}
+      saving.interval = 30
+      saving.doIntervalSaving = false
+      saving.daySaving = false
+      config.saving = saving
 
       localStorage.setItem('config', JSON.stringify(config))
     }
 
 
     let questionSettings = config.questionSettings
-
-    
-    
     //set values of params accordingly
     setn1range(questionSettings.n1range)
     setn2range(questionSettings.n2range)
@@ -125,8 +131,15 @@ const App = () => {
     }else{
       config.stats = {} //data structure: date: score:[correct,total], accuracy:}
     }
-    
-    
+
+    //set current interval saving value
+    if (config.saving){
+      console.log("CONfig.SAVING is", config.saving)
+      setIntervalSavingAmount(config.saving.interval)
+      setDoIntervalSaving(config.saving.doIntervalSaving)
+      document.getElementById("interval-saving-amount-input").value = config.saving.interval
+    }else{
+    }
     
     if (config.transcript && !transcriptShowed){
       //set transcript
@@ -157,9 +170,8 @@ const App = () => {
           setStatsDisplay(old => [row, ...old])
         }
       }
+
     }
-
-
   }
 
   const clearLocalStorage = () =>{
@@ -211,7 +223,13 @@ const App = () => {
     }else{
       //incorrect
       document.getElementById('answer-input').style.color = 'red' //set input red colour
-      addTranscript(false, `${num1} ${operatorText} ${num2} = `, `${answer}`, `${eval(`${num1} ${operator} ${num2}`)}`)
+      if (answer % num1 === 0 && operator==="*"){
+        addTranscript(false, `${num1} ${operatorText} ${num2} = ${eval(`${num1} ${operator} ${num2}`)}, ${num1} ${operatorText} ${Math.floor(answer / num1)} = ${answer}`, `${answer}`, `${eval(`${num1} ${operator} ${num2}`)}`)
+      }else if (answer % num2 ===0 && operator==="*"){
+        addTranscript(false, `${num1} ${operatorText} ${num2} = ${eval(`${num1} ${operator} ${num2}`)}, ${Math.floor(answer / num2)} ${operatorText} ${num2} = ${answer}`, `${answer}`, `${eval(`${num1} ${operator} ${num2}`)}`)
+      }else{
+        addTranscript(false, `${num1} ${operatorText} ${num2} = ${eval(`${num1} ${operator} ${num2}`)}`, `${answer}`, `${eval(`${num1} ${operator} ${num2}`)}`)
+      }
     }
   }
 
@@ -447,10 +465,29 @@ const App = () => {
   useEffect(()=>{
     //update score to local storage when stats saved
     let config = JSON.parse(localStorage.getItem('config'))
-    config['scores']['corrects'] = corrects
-    config['scores']['questionsAnswered'] = questionsAnswered
+    if (corrects && questionsAnswered){
+      config['scores']['corrects'] = corrects
+      config['scores']['questionsAnswered'] = questionsAnswered
+    }
     localStorage.setItem('config', JSON.stringify(config))
   }, [statsDisplay])
+
+  useEffect(()=>{
+    let config = JSON.parse(localStorage.getItem('config'))
+    if (config.saving && intervalSavingAmount){
+      config['saving']['interval'] = intervalSavingAmount
+      localStorage.setItem('config', JSON.stringify(config))
+    }
+  }, [intervalSavingAmount])
+
+  useEffect(()=>{
+    //check if it should save (for question interval saving)
+    
+    if ((questionsAnswered === intervalSavingAmount || (questionsAnswered > intervalSavingAmount && questionsAnswered%intervalSavingAmount === 0))&& doIntervalSaving){ //save and reset scores
+      console.log("dointervaslaving", doIntervalSaving)
+      saveScore(); setCorrects(0); setQuestionsAnswered(0)
+    }
+  }, [questionsAnswered])
 
 
   
@@ -475,7 +512,7 @@ const App = () => {
         <span><button onClick={()=>{selectAllNumbers()}}>all</button><button onClick={()=>{selectNoNumbers()}}>none</button></span>
         <br></br>
         <h3>operation</h3>
-        <OperatorLabel op="+" /><span> </span> {/*space seperation also lol need {} for comment wait somehow // works sometimes what im confused now ok whatever */}
+        <OperatorLabel op="+" /><span> </span> {/*space seperation*/}
         <OperatorLabel op="-" />
         <br></br>
         <OperatorLabel op="*" /><span> </span>
@@ -493,7 +530,19 @@ const App = () => {
         <h3>statistics</h3>
         <button onClick={()=>{saveScore(); setCorrects(0); setQuestionsAnswered(0)}}>save score</button>
         <button onClick={()=>{toggleTranscript()}}>{statsText}</button>
-
+        <h4>auto save statistics</h4>
+        <span>
+          <input type="checkbox" defaultChecked={doIntervalSaving} onChange={(e)=>{
+            console.log("dointervalsaving", doIntervalSaving, !doIntervalSaving)
+            setDoIntervalSaving(!doIntervalSaving)
+          }}/>every 
+          <input disabled={!doIntervalSaving} id="interval-saving-amount-input" type="number" min={1} style={{width:"2vw"}} onChange={(e)=>{
+            setIntervalSavingAmount(e.target.value)
+          }} />
+          questions
+        </span>
+        <br></br>
+        <span><input type="checkbox" />every day</span>
         <h3>other</h3>
         <button onClick={()=>{clearTranscript()}}>clear transcript</button>
         <button onClick={()=>{clearLocalStorage()}}>clear local storage <br></br>(<b>deletes ALL data</b>)</button>
