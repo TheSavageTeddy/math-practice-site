@@ -1,0 +1,5 @@
+# why hello there fellow hacker!
+# username: admin
+# password: UQ!bVP)&1Q913M
+User-agent: *
+Disallow:
