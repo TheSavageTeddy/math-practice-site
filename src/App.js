@@ -280,7 +280,7 @@ const App = () => {
   }
 
   function selectNoNumbers(){
-    setn1range(0)
+    setn1range([])
   }
 
   function saveScore(){
@@ -422,9 +422,8 @@ const App = () => {
     newQuestion()
     //save n1range to local storage
     let config = JSON.parse(localStorage.getItem('config'))
-    if (!n1range){
+    if (!n1range && n1range!==[]){
     }else{
-
       config['questionSettings']['n1range'] = n1range
       localStorage.setItem('config', JSON.stringify(config))
     }
@@ -482,8 +481,14 @@ const App = () => {
 
   useEffect(()=>{
     //check if it should save (for question interval saving)
-    
-    if ((questionsAnswered === intervalSavingAmount || (questionsAnswered > intervalSavingAmount && questionsAnswered%intervalSavingAmount === 0))&& doIntervalSaving){ //save and reset scores
+    console.log("QUESTIONS ASNWERED", questionsAnswered)
+    console.log("INTERVAL SAV AMOUNT", intervalSavingAmount)
+    if (
+      (questionsAnswered === Number(intervalSavingAmount) ||
+        (questionsAnswered > Number(intervalSavingAmount) && 
+          questionsAnswered% Number(intervalSavingAmount) === 0
+        )
+      ) && doIntervalSaving){ //save and reset scores
       console.log("dointervaslaving", doIntervalSaving)
       saveScore(); setCorrects(0); setQuestionsAnswered(0)
     }
