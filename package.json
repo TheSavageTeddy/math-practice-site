@@ -1,7 +1,7 @@
 {
   "name": "math-practice-site",
   "version": "0.1.0",
-  "homepage": "https://TheSavageTeddy.github.io/math-practice-website",
+  "homepage": "https://TheSavageTeddy.github.io/math-practice-site",
   "private": true,
   "dependencies": {
     "@testing-library/jest-dom": "^5.16.5",
