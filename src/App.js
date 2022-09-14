@@ -322,6 +322,15 @@ const App = () => {
     }
   }
 
+  function updateSavingSettings(){
+    console.log("updating saving settings...")
+    console.log('document.getElementById("interval-saving-amount-input").value', document.getElementById("interval-saving-amount-input").value)
+    console.log('document.getElementById("do-interval-saving-checkbox").value', document.getElementById("do-interval-saving-checkbox").checked)
+
+    setIntervalSavingAmount(document.getElementById("interval-saving-amount-input").value)
+    setDoIntervalSaving(document.getElementById("do-interval-saving-checkbox").checked)
+  }
+
 
   //COMPONENTS
   const NumberLabel = (props) => { //ES6 function thing, not using class as i need to parse variables
@@ -472,17 +481,7 @@ const App = () => {
   }, [statsDisplay])
 
   useEffect(()=>{
-    let config = JSON.parse(localStorage.getItem('config'))
-    if (config.saving && intervalSavingAmount){
-      config['saving']['interval'] = intervalSavingAmount
-      localStorage.setItem('config', JSON.stringify(config))
-    }
-  }, [intervalSavingAmount])
-
-  useEffect(()=>{
     //check if it should save (for question interval saving)
-    console.log("QUESTIONS ASNWERED", questionsAnswered)
-    console.log("INTERVAL SAV AMOUNT", intervalSavingAmount)
     if (
       (questionsAnswered === Number(intervalSavingAmount) ||
         (questionsAnswered > Number(intervalSavingAmount) && 
@@ -493,6 +492,23 @@ const App = () => {
       saveScore(); setCorrects(0); setQuestionsAnswered(0)
     }
   }, [questionsAnswered])
+
+  useEffect(()=>{
+    let config = JSON.parse(localStorage.getItem('config'))
+    console.log("dointervalsaving", doIntervalSaving)
+    if (config.saving && (doIntervalSaving !== 0)){
+      config['saving']['doIntervalSaving'] = doIntervalSaving
+      localStorage.setItem('config', JSON.stringify(config))
+    }
+  }, [doIntervalSaving])
+
+  useEffect(()=>{
+    let config = JSON.parse(localStorage.getItem('config'))
+    if (config.saving && intervalSavingAmount){
+      config['saving']['interval'] = intervalSavingAmount
+      localStorage.setItem('config', JSON.stringify(config))
+    }
+  }, [intervalSavingAmount])
 
 
   
@@ -537,17 +553,13 @@ const App = () => {
         <button onClick={()=>{toggleTranscript()}}>{statsText}</button>
         <h4>auto save statistics</h4>
         <span>
-          <input type="checkbox" defaultChecked={doIntervalSaving} onChange={(e)=>{
-            console.log("dointervalsaving", doIntervalSaving, !doIntervalSaving)
-            setDoIntervalSaving(!doIntervalSaving)
-          }}/>every 
-          <input disabled={!doIntervalSaving} id="interval-saving-amount-input" type="number" min={1} style={{width:"2vw"}} onChange={(e)=>{
-            setIntervalSavingAmount(e.target.value)
-          }} />
+          <input id="do-interval-saving-checkbox" type="checkbox" defaultChecked={doIntervalSaving} />every 
+          <input id="interval-saving-amount-input" type="number" min={1} style={{width:"2vw"}} />
           questions
         </span>
         <br></br>
         <span><input type="checkbox" />every day</span>
+        <button onClick={()=>{updateSavingSettings()}}>update</button>
         <h3>other</h3>
         <button onClick={()=>{clearTranscript()}}>clear transcript</button>
         <button onClick={()=>{clearLocalStorage()}}>clear local storage <br></br>(<b>deletes ALL data</b>)</button>
