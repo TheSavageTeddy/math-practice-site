@@ -70,10 +70,10 @@ const App = () => {
 
   const getLocalStorage = () => {
     config = JSON.parse(localStorage.getItem('config'))
-    console.log(config)
+    //console.log(config)
     if (!config){ // if doesnt exist (new person)
       config = {} //reset config from null or undefined
-      console.log("[!] no local storage found! setting them up now")
+      //console.log("[!] no local storage found! setting them up now")
       //default settings for the site
       let questionSettings = {}
       questionSettings.n1range = [1,2,3,4,5,6,7,8,9]
@@ -81,7 +81,7 @@ const App = () => {
       questionSettings.operator = "+"
       questionSettings.validOps = ["+", "-", "*", "/"]
 
-      console.log(questionSettings)
+      //console.log(questionSettings)
 
       config.questionSettings = questionSettings
       //config.transcript = []
@@ -131,7 +131,7 @@ const App = () => {
 
     //set current interval saving value
     if (config.saving){
-      console.log("CONfig.SAVING is", config.saving)
+      //console.log("CONfig.SAVING is", config.saving)
       setIntervalSavingAmount(config.saving.interval)
       setDoIntervalSaving(config.saving.doIntervalSaving)
       document.getElementById("interval-saving-amount-input").value = config.saving.interval
@@ -141,10 +141,10 @@ const App = () => {
     if (config.transcript && !transcriptShowed){
       //set transcript
       setTranscriptShowed(1)//avoid displaying transcript twice on local storage update, also used for stats
-      console.log("trasncriptshowed", transcriptShowed)
+      //console.log("trasncriptshowed", transcriptShowed)
       let ttb = document.getElementById("transcript-table-body")
-      console.log("transcript-table-body", ttb, 'len', ttb.childElementCount)
-      console.log("adding html transcript...")
+      //console.log("transcript-table-body", ttb, 'len', ttb.childElementCount)
+      //console.log("adding html transcript...")
       
       for (var i=config.transcript.length-1; i>=0; i--){//god why this took an hour
         let row = <>
@@ -177,9 +177,9 @@ const App = () => {
   }
 
   function newQuestion(){
-    console.log("NEW QUESTION")
+    //console.log("NEW QUESTION")
     if (!n1range || !n2range){
-      console.log("ranges empty")
+      //console.log("ranges empty")
     }else{
       let randOp = randItem(validoperators)
       setOperator(randOp)
@@ -231,14 +231,14 @@ const App = () => {
   }
 
   function addTranscript(status, question, answer, feedback){
-    console.log("TRANSCRIPT", transcript)
+    //console.log("TRANSCRIPT", transcript)
     let row = <><TranscriptRow status={status} question={question} answer={answer} feedback={feedback} /></>
     setTranscript(old => [row, ...old]) // insert new row at front of array (not back)
 
     let conf = JSON.parse(localStorage.getItem('config'))
-    console.log("COFIG is", conf)
+    //console.log("COFIG is", conf)
     conf['transcript'] = transcript
-    console.log("ADD TRANSCRIPT CONF", conf)
+    //console.log("ADD TRANSCRIPT CONF", conf)
     localStorage.setItem('config', JSON.stringify(conf))
   }
 
@@ -268,7 +268,7 @@ const App = () => {
         includedOps.push(elements[i].value)
       }
     }
-    console.log("INCLUDED OPS",includedOps)
+    //console.log("INCLUDED OPS",includedOps)
     setValidOperators(includedOps)
   }
   
@@ -294,7 +294,7 @@ const App = () => {
       
       let accuracyNum = (corrects!=0 ? round(corrects/questionsAnswered*100,2) : 0)
       config.stats[unixTime] = {date: dateString, score: [corrects, questionsAnswered], accuracy: accuracyNum}
-      console.log(config.stats)
+      //console.log(config.stats)
       localStorage.setItem('config', JSON.stringify(config))
 
       //adds element to stats div
@@ -307,7 +307,7 @@ const App = () => {
   function toggleTranscript(){//shows/hides transcript (to show the stats)
     let transcriptContainer = document.getElementById("transcriptContainer")
     let statsContainer = document.getElementById("stats-container")
-    console.log(transcriptContainer.style.display)
+    //console.log(transcriptContainer.style.display)
     if (transcriptContainer.style.display === "block" || transcriptContainer.style.display === ''){ //check if empty too (idk why but in css i specified but it still shows up as empty at start)
       transcriptContainer.style.display = "none"
       statsContainer.style.display = "block"
@@ -320,9 +320,9 @@ const App = () => {
   }
 
   function updateSavingSettings(){
-    console.log("updating saving settings...")
-    console.log('document.getElementById("interval-saving-amount-input").value', document.getElementById("interval-saving-amount-input").value)
-    console.log('document.getElementById("do-interval-saving-checkbox").value', document.getElementById("do-interval-saving-checkbox").checked)
+    //console.log("updating saving settings...")
+    //console.log('document.getElementById("interval-saving-amount-input").value', document.getElementById("interval-saving-amount-input").value)
+    //console.log('document.getElementById("do-interval-saving-checkbox").value', document.getElementById("do-interval-saving-checkbox").checked)
 
     setIntervalSavingAmount(document.getElementById("interval-saving-amount-input").value)
     setDoIntervalSaving(document.getElementById("do-interval-saving-checkbox").checked)
@@ -485,14 +485,14 @@ const App = () => {
           questionsAnswered% Number(intervalSavingAmount) === 0
         )
       ) && doIntervalSaving){ //save and reset scores
-      console.log("dointervaslaving", doIntervalSaving)
+      //console.log("dointervaslaving", doIntervalSaving)
       saveScore(); setCorrects(0); setQuestionsAnswered(0)
     }
   }, [questionsAnswered])
 
   useEffect(()=>{
     let config = JSON.parse(localStorage.getItem('config'))
-    console.log("dointervalsaving", doIntervalSaving)
+    //console.log("dointervalsaving", doIntervalSaving)
     if (config.saving && (doIntervalSaving !== 0)){
       config['saving']['doIntervalSaving'] = doIntervalSaving
       localStorage.setItem('config', JSON.stringify(config))
