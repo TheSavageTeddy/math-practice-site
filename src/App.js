@@ -63,7 +63,6 @@ const App = () => {
   const [validoperators, setValidOperators] = useState(0);
   const [doIntervalSaving, setDoIntervalSaving] = useState(0);
   const [intervalSavingAmount, setIntervalSavingAmount] = useState(0);
-  const [doDaySaving, setDoDaySaving] = useState(0);
 
   //configure local storage
   let config = {}
@@ -103,7 +102,6 @@ const App = () => {
       let saving = {}
       saving.interval = 30
       saving.doIntervalSaving = false
-      saving.daySaving = false
       config.saving = saving
 
       localStorage.setItem('config', JSON.stringify(config))
@@ -558,7 +556,6 @@ const App = () => {
           questions
         </span>
         <br></br>
-        <span><input type="checkbox" />every day</span>
         <button onClick={()=>{updateSavingSettings()}}>update</button>
         <h3>other</h3>
         <button onClick={()=>{clearTranscript()}}>clear transcript</button>

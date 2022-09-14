@@ -37,6 +37,19 @@ body{
   padding-bottom: 15px;
 }
 
+/* remove increment decrement buttons */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+input[type=number]{
+  
+  -webkit-appearance: none;
+    margin: 0;
+  -moz-appearance:textfield; /* Firefox */
+}
+
 
 /* 
 
