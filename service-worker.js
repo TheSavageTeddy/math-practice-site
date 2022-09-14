@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/3.6.3/workbox-sw.js");
 
 importScripts(
-  "/math-practice-website/precache-manifest.591718091be4d83511c2991725dd7b39.js"
+  "/math-practice-site/precache-manifest.d46b0d6cf20f930b3cf0ff4e6c50468d.js"
 );
 
 workbox.clientsClaim();
@@ -28,7 +28,7 @@ self.__precacheManifest = [].concat(self.__precacheManifest || []);
 workbox.precaching.suppressWarnings();
 workbox.precaching.precacheAndRoute(self.__precacheManifest, {});
 
-workbox.routing.registerNavigationRoute("/math-practice-website/index.html", {
+workbox.routing.registerNavigationRoute("/math-practice-site/index.html", {
   
   blacklist: [/^\/_/,/\/[^/]+\.[^/]+$/],
 });
