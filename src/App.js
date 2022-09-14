@@ -1,6 +1,5 @@
 import './App.css';
-import { useState, useEffect, Component } from 'react';
-import { render } from 'preact';
+import React, { Component, useState, useEffect}  from 'react';
 
 //helper funcs
 function randInt(min, max) { //random number inclusive both ranges
