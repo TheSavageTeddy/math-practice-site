@@ -544,7 +544,7 @@ const App = () => {
         <br></br>
         <button onClick={()=>{updateSettings()}}>update</button>
         {/* version */}
-        <p style={{position:"absolute", bottom:"2vh", "left":"2vh"}}>v1.0.4</p>
+        <p style={{position:"absolute", bottom:"2vh", "left":"2vh"}}>v1.0.5</p>
         
       </div>
       <div class="rightsidenav">
@@ -570,7 +570,7 @@ const App = () => {
         <br></br>
 
       </div>
-      <h1>welcome to Math X</h1> {/* title wait i should change this */}
+      <img src="./src/logo.png"></img><h1>welcome to Math X</h1> {/* title wait i should change this */}
         <div id="question-container">
           <label id="question-text">{(num1 && num2 && operator ? `${num1} ${operatorText} ${num2} = ` : "you have to actually select some things ")}</label> {/* another ternary for when they dont even select stuff */}
           <input 
