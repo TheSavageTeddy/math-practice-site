@@ -119,8 +119,11 @@ const App = () => {
       setCorrects(config.scores.corrects)
       setQuestionsAnswered(config.scores.questionsAnswered)
     }else{
-      config.scores.corrects = 0
-      config.scores.questionsAnswered = 0
+      let scores = {}
+      scores.corrects = 0
+      scores.questionsAnswered = 0
+
+      config.scores = scores
     }
 
     if (config.stats){
@@ -460,9 +463,11 @@ const App = () => {
     let config = JSON.parse(localStorage.getItem('config'))
     if ((!corrects || !questionsAnswered) && corrects !== 0 && questionsAnswered !== 0){
     }else{
-      config['scores']['corrects'] = corrects
-      config['scores']['questionsAnswered'] = questionsAnswered
-      localStorage.setItem('config', JSON.stringify(config))
+      if (config.scores){
+        config['scores']['corrects'] = corrects
+        config['scores']['questionsAnswered'] = questionsAnswered
+        localStorage.setItem('config', JSON.stringify(config))
+      }
     }
   }, [corrects, questionsAnswered])
 
@@ -563,7 +568,7 @@ const App = () => {
         <br></br>
 
       </div>
-      <h1>hello</h1> {/* title wait i should change this */}
+      <h1>welcome to Math X</h1> {/* title wait i should change this */}
         <div id="question-container">
           <label id="question-text">{(num1 && num2 && operator ? `${num1} ${operatorText} ${num2} = ` : "you have to actually select some things ")}</label> {/* another ternary for when they dont even select stuff */}
           <input 
