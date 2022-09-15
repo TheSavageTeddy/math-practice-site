@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/3.6.3/workbox-sw.js");
 
 importScripts(
-  "/math-practice-site/precache-manifest.4601df87534d52b1a0fe1f8f334a8c77.js"
+  "/math-practice-site/precache-manifest.0d7571086a7549bebb1cff9a6780384f.js"
 );
 
 workbox.clientsClaim();
