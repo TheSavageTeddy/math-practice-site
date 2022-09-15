@@ -52,7 +52,7 @@ input[type=number]{
 }
 
 input[type=checkbox]{
-  
+  filter: invert(100%) hue-rotate(100deg) brightness(2);
 }
 
 
