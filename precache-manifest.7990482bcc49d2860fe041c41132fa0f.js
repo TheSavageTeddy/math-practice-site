@@ -20,7 +20,7 @@ self.__precacheManifest = [
     "url": "/math-practice-site/static/js/3.12bf67e3.chunk.js"
   },
   {
-    "revision": "449038715a89e3b68bfcd65f7a51dad2",
+    "revision": "28d45f245602914092a9ecfde6d9bf32",
     "url": "/math-practice-site/index.html"
   }
 ];
