@@ -570,7 +570,10 @@ const App = () => {
         <br></br>
 
       </div>
-      <img src="./src/logo.png"></img><h1>welcome to Math X</h1> {/* title wait i should change this */}
+      <span>
+        
+        <h1>welcome to <img src="logo.png" style={{width: "40px", position: "absolute"}}></img></h1> {/* title wait i should change this */}
+      </span>
         <div id="question-container">
           <label id="question-text">{(num1 && num2 && operator ? `${num1} ${operatorText} ${num2} = ` : "you have to actually select some things ")}</label> {/* another ternary for when they dont even select stuff */}
           <input 
