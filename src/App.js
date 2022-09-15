@@ -543,7 +543,8 @@ const App = () => {
         <br></br>
         <br></br>
         <button onClick={()=>{updateSettings()}}>update</button>
-        <p style={{position:"absolute", bottom:"2vh", "left":"2vh"}}>v1.0.3</p>
+        {/* version */}
+        <p style={{position:"absolute", bottom:"2vh", "left":"2vh"}}>v1.0.4</p>
         
       </div>
       <div class="rightsidenav">
