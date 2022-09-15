@@ -64,7 +64,7 @@ const App = () => {
   const [intervalSavingAmount, setIntervalSavingAmount] = useState(0);
 
   //configure local storage
-  let config = {}
+  let config = {} 
   
 
 
@@ -219,8 +219,8 @@ const App = () => {
       setCorrects(prev=>prev+1)
     }else{
       //incorrect
-      document.getElementById('answer-input').style.color = 'red' //set input red colour
-      if (answer % num1 === 0 && operator==="*"){
+      document.getElementById('answer-input').style.color = 'palevioletred' //set input red colour
+      if (answer % num1 === 0 && operator==="*"){ 
         addTranscript(false, `${num1} ${operatorText} ${num2} = ${eval(`${num1} ${operator} ${num2}`)}, ${num1} ${operatorText} ${Math.floor(answer / num1)} = ${answer}`, `${answer}`, `${eval(`${num1} ${operator} ${num2}`)}`)
       }else if (answer % num2 ===0 && operator==="*"){
         addTranscript(false, `${num1} ${operatorText} ${num2} = ${eval(`${num1} ${operator} ${num2}`)}, ${Math.floor(answer / num2)} ${operatorText} ${num2} = ${answer}`, `${answer}`, `${eval(`${num1} ${operator} ${num2}`)}`)
@@ -328,7 +328,6 @@ const App = () => {
     setDoIntervalSaving(document.getElementById("do-interval-saving-checkbox").checked)
   }
 
-
   //COMPONENTS
   const NumberLabel = (props) => { //ES6 function thing, not using class as i need to parse variables
     let isChecked = false
@@ -383,8 +382,8 @@ const App = () => {
     <tr className={"stats-table-row"}>
       <td className='stats-table-data-date'>{props.date}</td>
       <td className='stats-table-data-score'>{props.score[0]}/{props.score[1]}</td>
-      <div className='stats-table-data-acc' style={{width: '100%', backgroundColor: 'red'}}>
-        <div style={{width: props.accuracy, backgroundColor: 'lime'}}>
+      <div className='stats-table-data-acc' style={{width: '100%', backgroundColor: 'palevioletred'}}>
+        <div style={{width: props.accuracy, backgroundColor: 'rgb(49, 136, 76)'}}>
           <td>{props.accuracy}</td>
         </div>
       </div>
@@ -459,7 +458,7 @@ const App = () => {
   useEffect(()=>{
     //save score to local storage
     let config = JSON.parse(localStorage.getItem('config'))
-    if (!corrects || !questionsAnswered){
+    if ((!corrects || !questionsAnswered) && corrects !== 0 && questionsAnswered !== 0){
     }else{
       config['scores']['corrects'] = corrects
       config['scores']['questionsAnswered'] = questionsAnswered
@@ -527,7 +526,8 @@ const App = () => {
         <NumberLabel num="11" />
         <NumberLabel num="12" />
         <br></br>
-        <span><button onClick={()=>{selectAllNumbers()}}>all</button><button onClick={()=>{selectNoNumbers()}}>none</button></span>
+        <span><button onClick={()=>{selectAllNumbers()}}>all</button>
+        <button onClick={()=>{selectNoNumbers()}}>none</button></span>
         <br></br>
         <h3>operation</h3>
         <OperatorLabel op="+" /><span> </span> {/*space seperation*/}
@@ -550,7 +550,7 @@ const App = () => {
         <button onClick={()=>{toggleTranscript()}}>{statsText}</button>
         <h4>auto save statistics</h4>
         <span>
-          <input id="do-interval-saving-checkbox" type="checkbox" defaultChecked={doIntervalSaving} />every 
+          <input id="do-interval-saving-checkbox" type="checkbox" defaultChecked={doIntervalSaving} />every<span> </span>
           <input id="interval-saving-amount-input" type="number" min={1} style={{width:"2vw"}} />
           questions
         </span>

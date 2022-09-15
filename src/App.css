@@ -1,14 +1,10 @@
 body{
-  background-color: #ffffff;
+  background-color: #282c34;
+  color: #fFFfFf
 }
 
 .App {
   text-align: center;
-}
-
-#heading-container {
-  background-color: #677070;
-  min-height: 10vh;
 }
 
 #question-container {
@@ -26,15 +22,20 @@ body{
 #answer-input {
   position: relative;
   top: 0vh;
-  background-color: #1b1d1e;
   max-width: 40vh;
   height: calc(79px + 4vmin);
   font-size: calc(69px + 4vmin);
-  color: white;
-
-
-  outline: none; /* remove outline */
+  border-width: 0;
   padding-bottom: 15px;
+}
+
+input{
+  outline: none; /* remove outline */
+  border-width: 1px;
+  border-style: solid;
+  border-color: white;
+  color: white;
+  background-color: #1b1d1e;
 }
 
 /* remove increment decrement buttons */
@@ -43,11 +44,45 @@ input::-webkit-inner-spin-button {
     -webkit-appearance: none;
     margin: 0;
 }
+
 input[type=number]{
-  
   -webkit-appearance: none;
     margin: 0;
   -moz-appearance:textfield; /* Firefox */
+}
+
+input[type=checkbox]{
+  
+}
+
+
+button {
+  background-color: rgba(255, 255, 255, 0);
+  border-radius: 8px;
+  border-width: 2px;
+  border-style: solid;
+  border-color: white;
+  color: #ffffff;
+  cursor: pointer;
+  display: inline-block;
+  font-size: 14px;
+  font-weight: 500;
+  list-style: none;
+  margin-top: 0.3vh;
+  margin-bottom: 0.3vh;
+  padding: 5px 6px;
+  text-align: center;
+  transition: all 200ms;
+  vertical-align: baseline;
+  white-space: nowrap;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+}
+
+button:hover{
+  background-color: rgb(255, 255, 255);
+  color: #1a1d20;
 }
 
 
@@ -73,7 +108,7 @@ LEFT SIDE NAVIGATION BAR
 
 .leftsidenav {
   height: 100%; 
-  width: 15vh; 
+  width: 20vh; 
   position: fixed; 
   z-index: 1; 
   top: 0; 
@@ -87,7 +122,7 @@ LEFT SIDE NAVIGATION BAR
 
 .rightsidenav {
   height: 100%; 
-  width: 15vh; 
+  width: 20vh; 
   position: fixed; 
   z-index: 1; 
   top: 0; 
@@ -123,13 +158,13 @@ table{
   margin-right: auto;
   margin: 0px auto;
 
-  width: 80vw;
+  width: 70vw;
 
   font-size: 30px;
 }
 
 .transcript-correct{
-  background-color: lime;
+  background-color: rgb(49, 136, 76)
 }
 
 .transcript-incorrect{
@@ -138,7 +173,7 @@ table{
 
 .transcript-table-data-q{
   height: 50px;
-  width: 50vw;
+  width: 40vw;
 }
 
 .transcript-table-data-q .transcript-table-data-fb{
@@ -170,10 +205,11 @@ table{
 
 .stats-table-score{
   height: 50px;
-  width: 30vw;
+  width: 25vw;
 }
 
 .stats-table-acc{
   height: 50px;
-  width: 30vw;
+  width: 25vw;
 }
+
