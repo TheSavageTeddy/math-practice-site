@@ -1,11 +1,11 @@
 self.__precacheManifest = [
   {
-    "revision": "fa3ce212c91c7d982d41",
+    "revision": "7900fb388821625ab86e",
     "url": "/math-practice-site/static/css/main.a55fe7e1.chunk.css"
   },
   {
-    "revision": "fa3ce212c91c7d982d41",
-    "url": "/math-practice-site/static/js/main.4293aa83.chunk.js"
+    "revision": "7900fb388821625ab86e",
+    "url": "/math-practice-site/static/js/main.02612231.chunk.js"
   },
   {
     "revision": "3e95c4069e5d17ed3b6e",
@@ -20,7 +20,7 @@ self.__precacheManifest = [
     "url": "/math-practice-site/static/js/3.12bf67e3.chunk.js"
   },
   {
-    "revision": "a03b6e9bb210567f1a9f5f3b6e5f43a0",
+    "revision": "d23697df02f3fc235d79a206bd05db8a",
     "url": "/math-practice-site/index.html"
   }
 ];
