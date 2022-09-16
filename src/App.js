@@ -544,7 +544,7 @@ const App = () => {
         <br></br>
         <button onClick={()=>{updateSettings()}}>update</button>
         {/* version */}
-        <p style={{position:"absolute", bottom:"2vh", "left":"2vh"}}>v2.1.0</p>
+        <a style={{position:"absolute", bottom:"2vh", "left":"2vh", color: "#00ff00"}} href="https://github.com/TheSavageTeddy/math-practice-site" target={"_blank"} >v2.1.0</a>
         
       </div>
       <div class="rightsidenav">
