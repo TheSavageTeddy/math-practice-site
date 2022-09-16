@@ -80,7 +80,7 @@ button {
   touch-action: manipulation;
 
   white-space: normal;
-  width: auto;
+  width: 100%;
 }
 
 button:hover{
