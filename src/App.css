@@ -78,6 +78,9 @@ button {
   user-select: none;
   -webkit-user-select: none;
   touch-action: manipulation;
+
+  white-space: normal;
+  width: auto;
 }
 
 button:hover{
@@ -117,7 +120,8 @@ LEFT SIDE NAVIGATION BAR
   overflow-x: hidden; 
   padding-top: 20px;
   
-  color: white
+  color: white;
+  padding: 5px;
 }
 
 .rightsidenav {
@@ -131,7 +135,8 @@ LEFT SIDE NAVIGATION BAR
   overflow-x: hidden; 
   padding-top: 20px;
   
-  color: white
+  color: white;
+  padding: 5px;
 }
 
 
